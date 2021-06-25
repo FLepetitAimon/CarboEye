@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name OPA4227PA)(type Legacy)(uri ${KIPRJMOD}/librairie/OPA4227PA/OPA4227PA.lib)(options "")(descr ""))
+  (lib (name OPA4227PAGA)(type Legacy)(uri ${KIPRJMOD}/librairie/OPA4227PAG4/OPA4227PAGA.lib)(options "")(descr ""))
+)
