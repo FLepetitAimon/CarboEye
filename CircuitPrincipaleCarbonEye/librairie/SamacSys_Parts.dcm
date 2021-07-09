@@ -1,0 +1,27 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP NE555DR
+D Single Precision Timer
+K
+F http://www.ti.com/lit/ds/symlink/ne555.pdf
+$ENDCMP
+#
+$CMP S5971
+D Si PIN Photodiode 320-1060nm Metal TO-18 Hamamatsu S5971 IR + Visible Light Si PIN Photodiode, Through Hole TO-18
+K
+F http://uk.rs-online.com/web/p/products/4155637
+$ENDCMP
+#
+$CMP S1223-01
+D Optical Parts,Light Receiving Element Hamamatsu S1223-01 Full Spectrum Si Photodiode, Through-hole TO-5
+K
+F http://uk.rs-online.com/web/p/products/4155722
+$ENDCMP
+#
+$CMP VSMG2700-GS08
+D Infrared Emitters 60 Degree 170mW 830nm
+K
+F http://uk.rs-online.com/web/p/products/7104042P
+$ENDCMP
+#
+#End Doc Library
