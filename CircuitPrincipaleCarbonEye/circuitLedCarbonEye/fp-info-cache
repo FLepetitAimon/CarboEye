@@ -1,4 +1,4 @@
-19220937056020269
+19212807876429299
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -76292,34 +76292,6 @@ rotary encoder
 0
 5
 4
-SamacSys_Parts
-LEDM3528X185N
-VSMG2700-GS08
-LED
-0
-2
-2
-SamacSys_Parts
-NE555DR
-D (R-PDSO-G8)
-Integrated Circuit
-0
-8
-8
-SamacSys_Parts
-S1223-01
-S1223-01
-Diode
-0
-2
-2
-SamacSys_Parts
-TO-18
-TO-18
-Diode
-0
-3
-3
 Sensor
 Aosong_DHT11_5.5x12.0_P2.54mm
 Temperature and humidity module, http://akizukidenshi.com/download/ds/aosong/DHT11.pdf
@@ -83051,13 +83023,6 @@ Varistor
 RV_Disc_D21.5mm_W11.4mm_P10mm
 Varistor, diameter 21.5mm, width 11.4mm, pitch 10mm
 varistor SIOV
-0
-2
-2
-empreintePerso
-LED_CMS_L4.2mm_W4.2mm
-
-
 0
 2
 2
