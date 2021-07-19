@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name circuitLedCarbonEye-rescue)(type Legacy)(uri ${KIPRJMOD}/circuitLedCarbonEye-rescue.lib)(options "")(descr ""))
+)

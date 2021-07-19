@@ -46,11 +46,11 @@ X ~ 2 0 -150 50 U 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# SamacSys_Parts_VSMG2700-GS08
+# circuitLedCarbonEye-rescue_VSMG2700-GS08-SamacSys_Parts
 #
-DEF SamacSys_Parts_VSMG2700-GS08 LED 0 30 Y Y 1 F N
+DEF circuitLedCarbonEye-rescue_VSMG2700-GS08-SamacSys_Parts LED 0 30 Y Y 1 F N
 F0 "LED" 500 350 50 H V L BNN
-F1 "SamacSys_Parts_VSMG2700-GS08" 500 250 50 H V L BNN
+F1 "circuitLedCarbonEye-rescue_VSMG2700-GS08-SamacSys_Parts" 500 250 50 H V L BNN
 F2 "LEDM3528X185N" 500 150 50 H I L BNN
 F3 "http://uk.rs-online.com/web/p/products/7104042P" 500 50 50 H I L BNN
 F4 "Infrared Emitters 60 Degree 170mW 830nm" 500 -50 50 H I L BNN "Description"

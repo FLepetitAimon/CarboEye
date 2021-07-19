@@ -14,7 +14,7 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L SamacSys_Parts:VSMG2700-GS08 LED4
+L circuitLedCarbonEye-rescue:VSMG2700-GS08-SamacSys_Parts LED4
 U 1 1 60E9C099
 P 4800 2400
 F 0 "LED4" H 5100 2133 50  0000 C CNN
@@ -32,7 +32,7 @@ F 10 "R1082703" H 5300 1750 50  0001 L BNN "Allied_Number"
 	-1   0    0    1   
 $EndComp
 $Comp
-L SamacSys_Parts:VSMG2700-GS08 LED3
+L circuitLedCarbonEye-rescue:VSMG2700-GS08-SamacSys_Parts LED3
 U 1 1 60E9E6AE
 P 4800 2050
 F 0 "LED3" H 5100 1783 50  0000 C CNN
@@ -50,7 +50,7 @@ F 10 "R1082703" H 5300 1400 50  0001 L BNN "Allied_Number"
 	-1   0    0    1   
 $EndComp
 $Comp
-L SamacSys_Parts:VSMG2700-GS08 LED2
+L circuitLedCarbonEye-rescue:VSMG2700-GS08-SamacSys_Parts LED2
 U 1 1 60E9F245
 P 4800 1700
 F 0 "LED2" H 5100 1433 50  0000 C CNN
@@ -68,7 +68,7 @@ F 10 "R1082703" H 5300 1050 50  0001 L BNN "Allied_Number"
 	-1   0    0    1   
 $EndComp
 $Comp
-L SamacSys_Parts:VSMG2700-GS08 LED1
+L circuitLedCarbonEye-rescue:VSMG2700-GS08-SamacSys_Parts LED1
 U 1 1 60E9F8A2
 P 4800 1300
 F 0 "LED1" H 5100 1033 50  0000 C CNN
@@ -86,7 +86,7 @@ F 10 "R1082703" H 5300 650 50  0001 L BNN "Allied_Number"
 	-1   0    0    1   
 $EndComp
 $Comp
-L SamacSys_Parts:VSMG2700-GS08 LED5
+L circuitLedCarbonEye-rescue:VSMG2700-GS08-SamacSys_Parts LED5
 U 1 1 60E9FE4B
 P 4800 3150
 F 0 "LED5" H 5100 2883 50  0000 C CNN
@@ -104,7 +104,7 @@ F 10 "R1082703" H 5300 2500 50  0001 L BNN "Allied_Number"
 	-1   0    0    1   
 $EndComp
 $Comp
-L SamacSys_Parts:VSMG2700-GS08 LED6
+L circuitLedCarbonEye-rescue:VSMG2700-GS08-SamacSys_Parts LED6
 U 1 1 60EA02FE
 P 4800 3500
 F 0 "LED6" H 5100 3233 50  0000 C CNN
@@ -122,7 +122,7 @@ F 10 "R1082703" H 5300 2850 50  0001 L BNN "Allied_Number"
 	-1   0    0    1   
 $EndComp
 $Comp
-L SamacSys_Parts:VSMG2700-GS08 LED7
+L circuitLedCarbonEye-rescue:VSMG2700-GS08-SamacSys_Parts LED7
 U 1 1 60EA09CD
 P 4800 3850
 F 0 "LED7" H 5100 3583 50  0000 C CNN
@@ -140,7 +140,7 @@ F 10 "R1082703" H 5300 3200 50  0001 L BNN "Allied_Number"
 	-1   0    0    1   
 $EndComp
 $Comp
-L SamacSys_Parts:VSMG2700-GS08 LED8
+L circuitLedCarbonEye-rescue:VSMG2700-GS08-SamacSys_Parts LED8
 U 1 1 60EA111A
 P 4800 4250
 F 0 "LED8" H 5100 3983 50  0000 C CNN
