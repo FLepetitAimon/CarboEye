@@ -20,40 +20,9 @@
   PIN 22 -> DIN : serial data input, MOSI SPI Arduino
   PIN 23 -> DVdd = 5 V
   PIN 24 -> DGND = GND
-
- 
-void setup()
-{
-   pinMode(freqOutputPin, OUTPUT);
-   
-   TCCR1A = ( (1 << COM1A0));
-  
-   TCCR1B = ((1 << WGM12) | (1 << CS10));
-
-   TIMSK1 = 0;
-   
-   OCR1A = ocr1aval;  
-
-   pinMode(2, INPUT);
-
-   pinMode(3, INPUT);  
-}
-
-void loop()
-{
-
-if (digitalRead(2) == HIGH){
-OCR1A = 1;
-}
-
-else if (digitalRead(2) == HIGH){
-OCR1A = 3;
-}
-  
-}
 */
 
-#include <SPI.h>
+ #include <SPI.h>
 
 const int freqOutputPin = 9;   // OC1A output pin for ATmega32u4 (Arduino Micro)
 const int ocr1aval  = 7; 
@@ -63,10 +32,7 @@ const int dataReady = 8;
 const int CS = 10;
 const int RESET = 7;
 
-//Define Functions for R/W Registers
-uint8_t writeSmallReg( uint8_t reg, uint8_t value);
-uint8_t readByteRegister( uint8_t reg);
-uint32_t readbigRegister( uint8_t reg);
+
 
 //8 or 32 Bit Integers
 uint32_t measure;
@@ -74,6 +40,7 @@ uint8_t readfilterlow;
 uint8_t readfilterhigh;
 uint8_t readmode;
 int8_t readtest;
+int8_t ain;
 
 bool bits24 = true; //24 bit from data register
 
@@ -107,17 +74,18 @@ void setup() {
 
   Serial.println("Begin ADC Register Setup");
   delay(100);
+  ain = 0x02;
   //Channel 4 Operation as Load Cell connected to AIN1 and AIN2
-  writeSmallReg(2, 0x61);   //Filter High, bipolar, 24-bit, current boost on, CLCKDIS 0
-  writeSmallReg(3, 0x80);   //Filter Low Register FS11-FS0=0001 1000 0000 Filter first notch = 50Hz -3dB = 13.1Hz
-  writeSmallReg(1, 0x2C);   //Self calibration
-  Serial.println("Setup END");
+  writeSmallReg(ain, 2, 0x44);   //Filter High, bipolar, 24-bit, current boost on, CLCKDIS 0
+  writeSmallReg(ain, 3, 0x61);   //Filter Low Register FS11-FS0=0001 1000 0000 Filter first notch = 50Hz -3dB = 13.1Hz
+  writeSmallReg(ain, 1, 0x24);   //Self calibration
   while (!(digitalRead(dataReady) == 0)); //wait for calibration to finish
+
   ///////////////////////Make sure Registers are Loaded with Correct Values/////////////////
-  readfilterlow = readByteRegister (3);
-  readfilterhigh = readByteRegister (2);
-  readmode = readByteRegister (1);
-  readtest = readByteRegister (4);
+  readfilterlow = readByteRegister (ain, 3);
+  readfilterhigh = readByteRegister (ain, 2);
+  readmode = readByteRegister (ain, 1);
+  readtest = readByteRegister (ain, 4);
   Serial.print("Filter Low Register =  ");    //expected value= 0x80
   Serial.println(readfilterlow, HEX);
   Serial.print("Filter High Register =  ");   //expected value= 0x61
@@ -128,7 +96,34 @@ void setup() {
   Serial.println(readtest, HEX);
   /////////////////////////////////////////////////////////////////////////////////////////
 
-  // while (digitalRead(dataReady)==1);   //wait for drdy to go low
+while (digitalRead(dataReady)==1);   //wait for drdy to go low
+ain = 0x03;
+
+  Serial.println("Begin ADC Register Setup");
+  delay(1000);
+  //Channel 4 Operation as Load Cell connected to AIN1 and AIN2
+  writeSmallReg(ain, 2, 0x44);   //Filter High, bipolar, 24-bit, current boost on, CLCKDIS 0
+  writeSmallReg(ain, 3, 0x61);   //Filter Low Register FS11-FS0=0001 1000 0000 Filter first notch = 50Hz -3dB = 13.1Hz
+  writeSmallReg(ain, 1, 0x24);   //Self calibration
+  while (!(digitalRead(dataReady) == 0)); //wait for calibration to finish
+  Serial.println("Setup END");
+  ///////////////////////Make sure Registers are Loaded with Correct Values/////////////////
+  readfilterlow = readByteRegister (ain, 3);
+  readfilterhigh = readByteRegister (ain, 2);
+  readmode = readByteRegister (ain, 1);
+  readtest = readByteRegister (ain, 4);
+  Serial.print("Filter Low Register =  ");    //expected value= 0x80
+  Serial.println(readfilterlow, HEX);
+  Serial.print("Filter High Register =  ");   //expected value= 0x61
+  Serial.println(readfilterhigh, HEX);
+  Serial.print("Mode Register =  ");          //expected value= 0x0C
+  Serial.println(readmode, HEX);
+  Serial.print("Test Register =  ");          //expected value=???
+  Serial.println(readtest, HEX);
+  /////////////////////////////////////////////////////////////////////////////////////////
+
+
+   
 }
 void loop  () {
   int val = 0;
@@ -141,17 +136,25 @@ void loop  () {
     Serial.print(measure, HEX);
     Serial.println("=" + String((float(measure) / 16777216.0) * 3.9) + "V");
   */
-  while (!(digitalRead(dataReady))); //wait for drdy to go low
-  measure = readbigRegister(5);   //read data
+  //while (!(digitalRead(dataReady))); //wait for drdy to go low
+  ain = 0x02;
+  measure = readbigRegister(ain, 5);   //read data
   Serial.print(measure, HEX);
-  Serial.println("=" + String((float(measure) / 16777216.0) * 3.863) + "V");   //ref voltage = 3.863V
+  Serial.print("=" + String((float(measure) / 16777216.0) * 5,5) + "V   ----   ");   //ref voltage = 3.863V
+delay(500);
+  //while (!(digitalRead(dataReady))); //wait for drdy to go low
+  ain = 0x03;
+  measure = readbigRegister(ain, 5);   //read data
+  Serial.print(measure, HEX);
+  Serial.println("=" + String((float(measure) / 16777216.0) * 5,5) + "V");   //ref voltage = 3.863V
+delay(500);
 
 }
 
 
 
-uint8_t writeSmallReg( uint8_t reg, uint8_t value) { // only valid for 8 bit registers 0..4
-  uint8_t ain = 0x04;
+uint8_t writeSmallReg(uint8_t ain, uint8_t reg, uint8_t value) { // only valid for 8 bit registers 0..4
+
   uint8_t result = 0;
   if (reg < 5) { // byte registers
     uint8_t cmd = 0; // a place to build the correct comm reg value.
@@ -179,7 +182,7 @@ uint8_t writeSmallReg( uint8_t reg, uint8_t value) { // only valid for 8 bit reg
   return result;
 }
 
-uint8_t readByteRegister( uint8_t reg) { // only valid for 8 bit registers 0..4
+uint8_t readByteRegister(uint8_t ain, uint8_t reg) { // only valid for 8 bit registers 0..4
 
   uint8_t result = 0;
   if (reg < 5) { // byte registers
@@ -187,7 +190,7 @@ uint8_t readByteRegister( uint8_t reg) { // only valid for 8 bit registers 0..4
 
     cmd = (reg << 4); // set the correct RS2..RS0 bits of COMM register
 
-    cmd = cmd | 0x04; // keep the analog mux to channel 4.
+    cmd = cmd | ain; // keep the analog mux to channel 4.
 
     cmd = cmd | 0x08; // read mode
 
@@ -204,9 +207,8 @@ uint8_t readByteRegister( uint8_t reg) { // only valid for 8 bit registers 0..4
   return result;
 }
 
-uint32_t readbigRegister( uint8_t reg) { // only valid for 16,24 bit registers 5..7
-
-  uint8_t ain = 0x04;
+uint32_t readbigRegister(uint8_t ain, uint8_t reg) { // only valid for 16,24 bit registers 5..7
+  
   uint32_t result = 0;
   if ((reg > 4) && (reg < 8)) { // big registers
     uint8_t cmd = 0; // a place to build the correct comm reg value.

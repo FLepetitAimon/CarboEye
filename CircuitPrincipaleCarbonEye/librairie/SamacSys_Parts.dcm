@@ -24,4 +24,10 @@ K
 F http://uk.rs-online.com/web/p/products/7104042P
 $ENDCMP
 #
+$CMP AD7714AN-5
+D Signal Conditioning ADC
+K
+F https://www.arrow.com/en/products/ad7714an-5/analog-devices
+$ENDCMP
+#
 #End Doc Library
