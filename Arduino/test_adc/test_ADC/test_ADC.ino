@@ -22,10 +22,12 @@
   PIN 24 -> DGND = GND
 */
 
- #include <SPI.h>
+#include <SPI.h>
+#define R_CO 100 //Resistance de Mesure du CO
+#define R_CO2 220 //Resistance de Mesure du CO2
 
 const int freqOutputPin = 9;   // OC1A output pin for ATmega32u4 (Arduino Micro)
-const int ocr1aval  = 7; 
+const int ocr1aval  = 7;
 
 /*ADC -> UNO Definitions*/
 const int dataReady = 8;
@@ -44,193 +46,208 @@ int8_t ain;
 
 bool bits24 = true; //24 bit from data register
 
-void setup() {
-  
-  pinMode(freqOutputPin, OUTPUT);   
-   TCCR1A = ( (1 << COM1A0));  
-   TCCR1B = ((1 << WGM12) | (1 << CS10));
-   TIMSK1 = 0;
-   OCR1A = ocr1aval;  
-   pinMode(2, INPUT);
-   pinMode(3, INPUT);
-   
-  Serial.begin(9600);
 
-  //SPI Setup
-  SPI.begin();
-  SPI.setBitOrder(MSBFIRST);
-  SPI.setClockDivider(210);  // Slow down SPI clock
-  SPI.setDataMode(SPI_MODE2);
+  void setup() {
 
-  pinMode(dataReady, INPUT);
-  pinMode(CS, OUTPUT);
-  pinMode(RESET, OUTPUT);
+    pinMode(freqOutputPin, OUTPUT);
+    TCCR1A = ( (1 << COM1A0));
+    TCCR1B = ((1 << WGM12) | (1 << CS10));
+    TIMSK1 = 0;
+    OCR1A = ocr1aval;
+    pinMode(2, INPUT);
+    pinMode(3, INPUT);
 
-  digitalWrite(CS, HIGH);  //deselect ADC
+    Serial.begin(9600);
 
-  digitalWrite(RESET, LOW); //Reset ADC
-  delay(100);
-  digitalWrite (RESET, HIGH);
+    //SPI Setup
+    SPI.begin();
+    SPI.setBitOrder(MSBFIRST);
+    SPI.setClockDivider(210);  // Slow down SPI clock
+    SPI.setDataMode(SPI_MODE2);
 
-  Serial.println("Begin ADC Register Setup");
-  delay(100);
-  ain = 0x02;
-  //Channel 4 Operation as Load Cell connected to AIN1 and AIN2
-  writeSmallReg(ain, 2, 0x44);   //Filter High, bipolar, 24-bit, current boost on, CLCKDIS 0
-  writeSmallReg(ain, 3, 0x61);   //Filter Low Register FS11-FS0=0001 1000 0000 Filter first notch = 50Hz -3dB = 13.1Hz
-  writeSmallReg(ain, 1, 0x24);   //Self calibration
-  while (!(digitalRead(dataReady) == 0)); //wait for calibration to finish
+    pinMode(dataReady, INPUT);
+    pinMode(CS, OUTPUT);
+    pinMode(RESET, OUTPUT);
 
-  ///////////////////////Make sure Registers are Loaded with Correct Values/////////////////
-  readfilterlow = readByteRegister (ain, 3);
-  readfilterhigh = readByteRegister (ain, 2);
-  readmode = readByteRegister (ain, 1);
-  readtest = readByteRegister (ain, 4);
-  Serial.print("Filter Low Register =  ");    //expected value= 0x80
-  Serial.println(readfilterlow, HEX);
-  Serial.print("Filter High Register =  ");   //expected value= 0x61
-  Serial.println(readfilterhigh, HEX);
-  Serial.print("Mode Register =  ");          //expected value= 0x0C
-  Serial.println(readmode, HEX);
-  Serial.print("Test Register =  ");          //expected value=???
-  Serial.println(readtest, HEX);
-  /////////////////////////////////////////////////////////////////////////////////////////
+    digitalWrite(CS, HIGH);  //deselect ADC
 
-while (digitalRead(dataReady)==1);   //wait for drdy to go low
-ain = 0x03;
+    digitalWrite(RESET, LOW); //Reset ADC
+    delay(100);
+    digitalWrite (RESET, HIGH);
 
-  Serial.println("Begin ADC Register Setup");
-  delay(1000);
-  //Channel 4 Operation as Load Cell connected to AIN1 and AIN2
-  writeSmallReg(ain, 2, 0x44);   //Filter High, bipolar, 24-bit, current boost on, CLCKDIS 0
-  writeSmallReg(ain, 3, 0x61);   //Filter Low Register FS11-FS0=0001 1000 0000 Filter first notch = 50Hz -3dB = 13.1Hz
-  writeSmallReg(ain, 1, 0x24);   //Self calibration
-  while (!(digitalRead(dataReady) == 0)); //wait for calibration to finish
-  Serial.println("Setup END");
-  ///////////////////////Make sure Registers are Loaded with Correct Values/////////////////
-  readfilterlow = readByteRegister (ain, 3);
-  readfilterhigh = readByteRegister (ain, 2);
-  readmode = readByteRegister (ain, 1);
-  readtest = readByteRegister (ain, 4);
-  Serial.print("Filter Low Register =  ");    //expected value= 0x80
-  Serial.println(readfilterlow, HEX);
-  Serial.print("Filter High Register =  ");   //expected value= 0x61
-  Serial.println(readfilterhigh, HEX);
-  Serial.print("Mode Register =  ");          //expected value= 0x0C
-  Serial.println(readmode, HEX);
-  Serial.print("Test Register =  ");          //expected value=???
-  Serial.println(readtest, HEX);
-  /////////////////////////////////////////////////////////////////////////////////////////
+    Serial.println("Begin ADC Register Setup");
+    delay(100);
+    ain = 0x02;
+    //Channel 4 Operation as Load Cell connected to AIN1 and AIN2
+    writeSmallReg(ain, 2, 0x44);   //Filter High, bipolar, 24-bit, current boost on, CLCKDIS 0
+    writeSmallReg(ain, 3, 0x61);   //Filter Low Register FS11-FS0=0001 1000 0000 Filter first notch = 50Hz -3dB = 13.1Hz
+    writeSmallReg(ain, 1, 0x24);   //Self calibration
+    while (!(digitalRead(dataReady) == 0)); //wait for calibration to finish
 
+    ///////////////////////Make sure Registers are Loaded with Correct Values/////////////////
+    readfilterlow = readByteRegister (ain, 3);
+    readfilterhigh = readByteRegister (ain, 2);
+    readmode = readByteRegister (ain, 1);
+    readtest = readByteRegister (ain, 4);
+    Serial.print("Filter Low Register =  ");    //expected value= 0x80
+    Serial.println(readfilterlow, HEX);
+    Serial.print("Filter High Register =  ");   //expected value= 0x61
+    Serial.println(readfilterhigh, HEX);
+    Serial.print("Mode Register =  ");          //expected value= 0x0C
+    Serial.println(readmode, HEX);
+    Serial.print("Test Register =  ");          //expected value=???
+    Serial.println(readtest, HEX);
+    /////////////////////////////////////////////////////////////////////////////////////////
 
-   
-}
-void loop  () {
-  int val = 0;
-  /*
-    measure=readbigRegister(5);
-    while (!(digitalRead(dataReady)));
-    while (digitalRead(dataReady));
-    while (!(digitalRead(dataReady)));
-    while (digitalRead(dataReady));
-    Serial.print(measure, HEX);
-    Serial.println("=" + String((float(measure) / 16777216.0) * 3.9) + "V");
-  */
-  //while (!(digitalRead(dataReady))); //wait for drdy to go low
-  ain = 0x02;
-  measure = readbigRegister(ain, 5);   //read data
-  Serial.print(measure, HEX);
-  Serial.print("=" + String((float(measure) / 16777216.0) * 5,5) + "V   ----   ");   //ref voltage = 3.863V
-delay(500);
-  //while (!(digitalRead(dataReady))); //wait for drdy to go low
-  ain = 0x03;
-  measure = readbigRegister(ain, 5);   //read data
-  Serial.print(measure, HEX);
-  Serial.println("=" + String((float(measure) / 16777216.0) * 5,5) + "V");   //ref voltage = 3.863V
-delay(500);
+    while (digitalRead(dataReady) == 1); //wait for drdy to go low
+    ain = 0x03;
 
-}
+    Serial.println("Begin ADC Register Setup");
+    delay(1000);
+    //Channel 4 Operation as Load Cell connected to AIN1 and AIN2
+    writeSmallReg(ain, 2, 0x44);   //Filter High, bipolar, 24-bit, current boost on, CLCKDIS 0
+    writeSmallReg(ain, 3, 0x61);   //Filter Low Register FS11-FS0=0001 1000 0000 Filter first notch = 50Hz -3dB = 13.1Hz
+    writeSmallReg(ain, 1, 0x24);   //Self calibration
+    while (!(digitalRead(dataReady) == 0)); //wait for calibration to finish
+    Serial.println("Setup END");
+    ///////////////////////Make sure Registers are Loaded with Correct Values/////////////////
+    readfilterlow = readByteRegister (ain, 3);
+    readfilterhigh = readByteRegister (ain, 2);
+    readmode = readByteRegister (ain, 1);
+    readtest = readByteRegister (ain, 4);
+    Serial.print("Filter Low Register =  ");    //expected value= 0x80
+    Serial.println(readfilterlow, HEX);
+    Serial.print("Filter High Register =  ");   //expected value= 0x61
+    Serial.println(readfilterhigh, HEX);
+    Serial.print("Mode Register =  ");          //expected value= 0x0C
+    Serial.println(readmode, HEX);
+    Serial.print("Test Register =  ");          //expected value=???
+    Serial.println(readtest, HEX);
+    /////////////////////////////////////////////////////////////////////////////////////////
 
 
 
-uint8_t writeSmallReg(uint8_t ain, uint8_t reg, uint8_t value) { // only valid for 8 bit registers 0..4
-
-  uint8_t result = 0;
-  if (reg < 5) { // byte registers
-    uint8_t cmd = 0; // a place to build the correct comm reg value.
-
-    cmd = (reg << 4); // set the correct RS2..RS0 bits of COMM register
-
-    if (reg == 0) // update global ain Value
-      ain = value & 7;
-
-    cmd = cmd | ain; // keep the analog mux what it was previously configured as.
-
-    digitalWrite(CS, LOW); // select the ADC
-
-    uint8_t stat = SPI.transfer(cmd); // actually send the cmd and read the current status
-
-    if (reg != 0) { // actually send the value to reg
-
-      uint8_t unk = SPI.transfer(value);
-      if (reg == 2) bits24 = (value & 0x40) == 0x40; // if configured for 24bit data register
-
-    }
-    digitalWrite(CS, HIGH); // all done with device
-    result = stat; // return value received, drdy is bit 7.
   }
-  return result;
-}
+  void loop  () {
+    int val = 0;
+    /*
+      measure=readbigRegister(5);
+      while (!(digitalRead(dataReady)));
+      while (digitalRead(dataReady));
+      while (!(digitalRead(dataReady)));
+      while (digitalRead(dataReady));
+      Serial.print(measure, HEX);
+      Serial.println("=" + String((float(measure) / 16777216.0) * 3.9) + "V");
+    */
+    //while (!(digitalRead(dataReady))); //wait for drdy to go low
+ 
+    Serial.print("CO: "+ String(ConcentrationCO(),4) + " ppm   ----   ");  //ref voltage = 3.863V
+    delay(500);
+    //while (!(digitalRead(dataReady))); //wait for drdy to go low
+    Serial.println("CO2: "+ String(ConcentrationCO2(),4) + " ppm");  //ref voltage = 3.863V
+    delay(500);
 
-uint8_t readByteRegister(uint8_t ain, uint8_t reg) { // only valid for 8 bit registers 0..4
-
-  uint8_t result = 0;
-  if (reg < 5) { // byte registers
-    uint8_t cmd = 0; // a place to build the correct comm reg value.
-
-    cmd = (reg << 4); // set the correct RS2..RS0 bits of COMM register
-
-    cmd = cmd | ain; // keep the analog mux to channel 4.
-
-    cmd = cmd | 0x08; // read mode
-
-    digitalWrite(CS, LOW); // select the ADC
-
-    result = SPI.transfer(cmd); // actually send the cmd and read the current status
-
-    if (reg != 0) { // actually read the value of reg
-
-      result = SPI.transfer(0); // 0 is just a place holder, the ADC ignores it. because of read mode
-    }
-    digitalWrite(CS, HIGH); // all done with device
   }
-  return result;
-}
 
-uint32_t readbigRegister(uint8_t ain, uint8_t reg) { // only valid for 16,24 bit registers 5..7
-  
-  uint32_t result = 0;
-  if ((reg > 4) && (reg < 8)) { // big registers
-    uint8_t cmd = 0; // a place to build the correct comm reg value.
 
-    cmd = (reg << 4); // set the correct RS2..RS0 bits of COMM register
 
-    cmd = cmd | ain; // keep the analog mux what it was previously configured as.
+  uint8_t writeSmallReg(uint8_t ain, uint8_t reg, uint8_t value) { // only valid for 8 bit registers 0..4
 
-    cmd = cmd | 0x08; // read mode
+    uint8_t result = 0;
+    if (reg < 5) { // byte registers
+      uint8_t cmd = 0; // a place to build the correct comm reg value.
 
-    digitalWrite(CS, LOW); // select the ADC
+      cmd = (reg << 4); // set the correct RS2..RS0 bits of COMM register
 
-    uint8_t stat = SPI.transfer(cmd); // actually send the cmd and read the current status
-    uint8_t b = SPI.transfer(0); // send out placeholder get back byte
-    result = b;
-    b = SPI.transfer(0); // send out placeholder get back bigger byte
-    result = (result << 8) + b; // build up 16 bit value from bytes
-    if (bits24 || (reg > 5)) { //do a 24bit transfer
+      if (reg == 0) // update global ain Value
+        ain = value & 7;
+
+      cmd = cmd | ain; // keep the analog mux what it was previously configured as.
+
+      digitalWrite(CS, LOW); // select the ADC
+
+      uint8_t stat = SPI.transfer(cmd); // actually send the cmd and read the current status
+
+      if (reg != 0) { // actually send the value to reg
+
+        uint8_t unk = SPI.transfer(value);
+        if (reg == 2) bits24 = (value & 0x40) == 0x40; // if configured for 24bit data register
+
+      }
+      digitalWrite(CS, HIGH); // all done with device
+      result = stat; // return value received, drdy is bit 7.
+    }
+    return result;
+  }
+
+  uint8_t readByteRegister(uint8_t ain, uint8_t reg) { // only valid for 8 bit registers 0..4
+
+    uint8_t result = 0;
+    if (reg < 5) { // byte registers
+      uint8_t cmd = 0; // a place to build the correct comm reg value.
+
+      cmd = (reg << 4); // set the correct RS2..RS0 bits of COMM register
+
+      cmd = cmd | ain; // keep the analog mux to channel 4.
+
+      cmd = cmd | 0x08; // read mode
+
+      digitalWrite(CS, LOW); // select the ADC
+
+      result = SPI.transfer(cmd); // actually send the cmd and read the current status
+
+      if (reg != 0) { // actually read the value of reg
+
+        result = SPI.transfer(0); // 0 is just a place holder, the ADC ignores it. because of read mode
+      }
+      digitalWrite(CS, HIGH); // all done with device
+    }
+    return result;
+  }
+
+  uint32_t readbigRegister(uint8_t ain, uint8_t reg) { // only valid for 16,24 bit registers 5..7
+
+    uint32_t result = 0;
+    if ((reg > 4) && (reg < 8)) { // big registers
+      uint8_t cmd = 0; // a place to build the correct comm reg value.
+
+      cmd = (reg << 4); // set the correct RS2..RS0 bits of COMM register
+
+      cmd = cmd | ain; // keep the analog mux what it was previously configured as.
+
+      cmd = cmd | 0x08; // read mode
+
+      digitalWrite(CS, LOW); // select the ADC
+
+      uint8_t stat = SPI.transfer(cmd); // actually send the cmd and read the current status
+      uint8_t b = SPI.transfer(0); // send out placeholder get back byte
+      result = b;
       b = SPI.transfer(0); // send out placeholder get back bigger byte
-      result = (result << 8) + b; // build up 24 bit value from bytes.
+      result = (result << 8) + b; // build up 16 bit value from bytes
+      if (bits24 || (reg > 5)) { //do a 24bit transfer
+        b = SPI.transfer(0); // send out placeholder get back bigger byte
+        result = (result << 8) + b; // build up 24 bit value from bytes.
+      }
+      digitalWrite(CS, HIGH); // all done with device
     }
-    digitalWrite(CS, HIGH); // all done with device
+    return result;
   }
-  return result;
+
+  
+float ConcentrationCO() {
+
+  //transforme la mesure analogique en une valeur de ppm
+  float mesure = (float(readbigRegister(0x03, 5)) / 16777216.0) * 5;
+  //float mCO = 0;
+  //mCO = (mesure / R_CO - 0.004) * (5000 / 0.016);
+  return mesure;
+}
+
+float ConcentrationCO2() {
+
+  //transforme la mesure analogique en une valeur de ppm
+  float mesure = (float(readbigRegister(0x02, 5)) / 16777216.0) * 5;
+  float mCO2 = 0;
+  mCO2 = (mesure / R_CO2 - 0.004) * (5000 / 0.016);
+  return mCO2;
 }
