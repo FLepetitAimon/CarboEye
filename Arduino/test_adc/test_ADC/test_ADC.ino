@@ -81,7 +81,7 @@ bool bits24 = true; //24 bit from data register
     //Channel 4 Operation as Load Cell connected to AIN1 and AIN2
     writeSmallReg(ain, 2, 0x44);   //Filter High, bipolar, 24-bit, current boost on, CLCKDIS 0
     writeSmallReg(ain, 3, 0x61);   //Filter Low Register FS11-FS0=0001 1000 0000 Filter first notch = 50Hz -3dB = 13.1Hz
-    writeSmallReg(ain, 1, 0x24);   //Self calibration
+    writeSmallReg(ain, 1, 0x20);   //Self calibration
     while (!(digitalRead(dataReady) == 0)); //wait for calibration to finish
 
     ///////////////////////Make sure Registers are Loaded with Correct Values/////////////////
@@ -107,7 +107,7 @@ bool bits24 = true; //24 bit from data register
     //Channel 4 Operation as Load Cell connected to AIN1 and AIN2
     writeSmallReg(ain, 2, 0x44);   //Filter High, bipolar, 24-bit, current boost on, CLCKDIS 0
     writeSmallReg(ain, 3, 0x61);   //Filter Low Register FS11-FS0=0001 1000 0000 Filter first notch = 50Hz -3dB = 13.1Hz
-    writeSmallReg(ain, 1, 0x24);   //Self calibration
+    writeSmallReg(ain, 1, 0x20);   //Self calibration
     while (!(digitalRead(dataReady) == 0)); //wait for calibration to finish
     Serial.println("Setup END");
     ///////////////////////Make sure Registers are Loaded with Correct Values/////////////////
