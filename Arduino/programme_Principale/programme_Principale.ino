@@ -13,7 +13,7 @@
 #define l_380 LOW                 // Tension de grille du transistor pour activé les LEDs - 380nm
 #define l_880 HIGH                // Tension de grille du transistor pour activé les LEDs - 880nm
 #define SwitchLambda 1            // Pin de sortie sur l'arduino de controle de la grille du transistor
-#define Dfiltre 3.0              // diamètre du conduit contenant le filtre
+#define Dfiltre 6.0              // diamètre du conduit contenant le filtre
 
 const int freqOutputPin = 9;   // OC1A output pin for ATmega32u4 (Arduino Micro)
 const int ocr1aval  = 7;
@@ -152,18 +152,22 @@ void ReadCurrentATN(float ATN[2]) {
   digitalWrite(SwitchLambda, l_380);
   delay(50);
 
-  for (int i = 0; i < 1; i++) {
-    while (!(digitalRead(dataReady))); //wait for drdy to go low
+  for (int i = 0; i < 5; i++) {
+    
     delay(500);
-    Iref += (float(readbigRegister(0x00, 5)) / 16777216.0) * 5;
-    while (!(digitalRead(dataReady))); //wait for drdy to go low
+    Iref += (float(readbigRegister(0x02, 5)) / 16777216.0-0.248) * 7.08;
+    
     delay(500);
-    Ifiltre += (float(readbigRegister(0x01, 5)) / 16777216.0) * 5;
+    Ifiltre += (float(readbigRegister(0x03, 5)) / 16777216.0-0.248) * 7.08;
+    
+    //Iref += ads.computeVolts(ads.readADC_SingleEnded(0));
+    //Ifiltre += ads.computeVolts(ads.readADC_SingleEnded(1));
 
-    Serial.println("Iref: " + String(Iref, 5) + " Ifiltre: " + String(Ifiltre, 5));
+    //Serial.println("Iref: " + String(Iref, 5) + " Ifiltre: " + String(Ifiltre, 5));
   }
-  Iref = Iref ;
-  Ifiltre = Ifiltre ;
+  Iref = Iref/10 ;
+  Ifiltre = Ifiltre/5 ;
+  Serial.println("Iref: " + String(Iref, 5) + " Ifiltre: " + String(Ifiltre, 5));
 
   ATN[0] = 100 * log(Iref / Ifiltre);
 
@@ -172,13 +176,18 @@ void ReadCurrentATN(float ATN[2]) {
   Iref = 0;
   Ifiltre = 0;
   for (int i = 0; i < 1; i++) {
-    while (!(digitalRead(dataReady))); //wait for drdy to go low
+   
     delay(500);
-    Iref += (float(readbigRegister(0x00, 5)) / 16777216.0) * 5;
-    while (!(digitalRead(dataReady))); //wait for drdy to go low
+    Iref += (float(readbigRegister(0x03, 5)) / 16777216.0-0.248) * 7.08;
+    
     delay(500);
-    Ifiltre += (float(readbigRegister(0x01, 5)) / 16777216.0) * 5;
+    Ifiltre += (float(readbigRegister(0x04, 5)) / 16777216.0-0.248) * 7.08;
+    //Iref += ads.computeVolts(ads.readADC_SingleEnded(0));
+    //Ifiltre += ads.computeVolts(ads.readADC_SingleEnded(1));
   }
+
+  Iref = Iref/1 ;
+  Ifiltre = Ifiltre/1 ;
 
   ATN[1] = 100 * log(Iref / Ifiltre);
 }
@@ -250,10 +259,10 @@ void setup() {
 
 
   //Channel 4 Operation as Load Cell connected to AIN1 and AIN2
-  uint8_t i = 0x01;
+  uint8_t i = 0x03;
   writeSmallReg(i, 2, 0x44);   //Filter High, bipolar, 24-bit, current boost on, CLCKDIS 0
-  writeSmallReg(i, 3, 0xA0);   //Filter Low Register FS11-FS0=0001 1000 0000 Filter first notch = 50Hz -3dB = 13.1Hz
-  writeSmallReg(i, 1, 0x24);   //Self calibration
+  writeSmallReg(i, 3, 0x61);   //Filter Low Register FS11-FS0=0001 1000 0000 Filter first notch = 50Hz -3dB = 13.1Hz
+  writeSmallReg(i, 1, 0x20);   //Self calibration
   while (!(digitalRead(dataReady) == 0)); //wait for calibration to finish
   Serial.println("Setup END");
   ///////////////////////Make sure Registers are Loaded with Correct Values/////////////////
@@ -274,10 +283,10 @@ void setup() {
 
   /////////////////////////////////////////////////////////////////////////////////////////
 
-  i = 0x00;
+  i = 0x02;
   writeSmallReg(i, 2, 0x44);   //Filter High, bipolar, 24-bit, current boost on, CLCKDIS 0
-  writeSmallReg(i, 3, 0xA0);   //Filter Low Register FS11-FS0=0001 1000 0000 Filter first notch = 50Hz -3dB = 13.1Hz
-  writeSmallReg(i, 1, 0x24);   //Self calibration
+  writeSmallReg(i, 3, 0x61);   //Filter Low Register FS11-FS0=0001 1000 0000 Filter first notch = 50Hz -3dB = 13.1Hz
+  writeSmallReg(i, 1, 0x20);   //Self calibration
   while (!(digitalRead(dataReady) == 0)); //wait for calibration to finish
   Serial.println("Setup END");
   ///////////////////////Make sure Registers are Loaded with Correct Values/////////////////
@@ -295,6 +304,12 @@ void setup() {
   Serial.println(readtest, HEX);
   //}
   /////////////////////////////////////////////////////////////////////////////////////////
+
+  /*ads.setGain(GAIN_ONE);        // 2x gain   +/- 2.048V  1 bit = 1mV      0.0625mV
+  if (!ads.begin()) {
+    Serial.println("Failed to initialize ADS.");
+    while (1);
+  }*/
 
 
   AuxTime = millis();                                //Mesure initiale de transmission

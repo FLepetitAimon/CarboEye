@@ -141,10 +141,10 @@ bool bits24 = true; //24 bit from data register
     */
     //while (!(digitalRead(dataReady))); //wait for drdy to go low
  
-    Serial.print("CO: "+ String(ConcentrationCO(),5) + " ppm   ----   ");  //ref voltage = 3.863V
+    Serial.print("CO: "+ String(ConcentrationCO(),7) + " ppm   ----   ");  //ref voltage = 3.863V
     delay(500);
     //while (!(digitalRead(dataReady))); //wait for drdy to go low
-    Serial.println("CO2: "+ String(ConcentrationCO2(),5) + " ppm");  //ref voltage = 3.863V
+    Serial.println("CO2: "+ String(ConcentrationCO2(),7) + " ppm");  //ref voltage = 3.863V
     delay(500);
 
   }
@@ -239,8 +239,9 @@ float ConcentrationCO() {
   //transforme la mesure analogique en une valeur de ppm
   float mesure = (float(readbigRegister(0x03, 5)) / 16777216.0-0.248) * 7.08;
   float mCO = 0;
-  mCO = (mesure / R_CO - 0.004) * (5000 / 0.016);
-  return mCO;
+  //mCO = (mesure / R_CO - 0.004) * (5000 / 0.016);
+  //return mCO;
+  return mesure;
 }
 
 float ConcentrationCO2() {
@@ -248,6 +249,7 @@ float ConcentrationCO2() {
   //transforme la mesure analogique en une valeur de ppm
   float mesure = (float(readbigRegister(0x02, 5)) / 16777216.0) * 3.64;
   float mCO2 = 0;
-  mCO2 = (mesure / R_CO2 - 0.004) * (5000 / 0.016);
-  return mCO2;
+  //mCO2 = (mesure / R_CO2 - 0.004) * (5000 / 0.016);
+  //return mCO2;
+  return mesure;
 }
