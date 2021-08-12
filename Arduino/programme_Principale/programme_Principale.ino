@@ -155,17 +155,17 @@ void ReadCurrentATN(float ATN[2]) {
   for (int i = 0; i < 5; i++) {
     
     delay(500);
-    Iref += (float(readbigRegister(0x02, 5)) / 16777216.0-0.248) * 7.08;
+    Iref += (float(readbigRegister(0x03, 5)) / 16777216.0-0.248) * 7.08;
     
     delay(500);
-    Ifiltre += (float(readbigRegister(0x03, 5)) / 16777216.0-0.248) * 7.08;
+    Ifiltre += (float(readbigRegister(0x02, 5)) / 16777216.0-0.248) * 7.08;
     
     //Iref += ads.computeVolts(ads.readADC_SingleEnded(0));
     //Ifiltre += ads.computeVolts(ads.readADC_SingleEnded(1));
 
     //Serial.println("Iref: " + String(Iref, 5) + " Ifiltre: " + String(Ifiltre, 5));
   }
-  Iref = Iref/10 ;
+  Iref = Iref/5 ;
   Ifiltre = Ifiltre/5 ;
   Serial.println("Iref: " + String(Iref, 5) + " Ifiltre: " + String(Ifiltre, 5));
 
@@ -181,7 +181,7 @@ void ReadCurrentATN(float ATN[2]) {
     Iref += (float(readbigRegister(0x03, 5)) / 16777216.0-0.248) * 7.08;
     
     delay(500);
-    Ifiltre += (float(readbigRegister(0x04, 5)) / 16777216.0-0.248) * 7.08;
+    Ifiltre += (float(readbigRegister(0x02, 5)) / 16777216.0-0.248) * 7.08;
     //Iref += ads.computeVolts(ads.readADC_SingleEnded(0));
     //Ifiltre += ads.computeVolts(ads.readADC_SingleEnded(1));
   }
