@@ -152,7 +152,7 @@ void ReadCurrentATN(float ATN[2]) {
   digitalWrite(SwitchLambda, l_380);
   delay(50);
 
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < 3; i++) {
     
     delay(500);
     Iref += (float(readbigRegister(0x03, 5)) / 16777216.0-0.248) * 7.08;
@@ -165,8 +165,8 @@ void ReadCurrentATN(float ATN[2]) {
 
     //Serial.println("Iref: " + String(Iref, 5) + " Ifiltre: " + String(Ifiltre, 5));
   }
-  Iref = Iref/5 ;
-  Ifiltre = Ifiltre/5 ;
+  Iref = Iref/3 ;
+  Ifiltre = Ifiltre/3 ;
   Serial.println("Iref: " + String(Iref, 5) + " Ifiltre: " + String(Ifiltre, 5));
 
   ATN[0] = 100 * log(Iref / Ifiltre);
