@@ -194,7 +194,7 @@ void ReadCurrentATN(float ATN[2]) {
 
 
 //*************************************************************************
-// Convertie la difference d'attenuation en concentration de Carbone Suie *
+// Convertit la difference d'attenuation en concentration de Carbone Suie *
 // Voir fiche technique pour plus d'info                                  *
 //*************************************************************************
 void ConcentrationBC(float d_ATN[2], float BC[2]) {
